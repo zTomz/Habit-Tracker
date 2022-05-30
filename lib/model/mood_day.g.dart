@@ -19,17 +19,20 @@ class MoodDayAdapter extends TypeAdapter<MoodDay> {
     return MoodDay(
       feeling: fields[0] as String,
       date: fields[1] as DateTime,
+      habbits: (fields[2] as List).cast<Habbit>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, MoodDay obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.feeling)
       ..writeByte(1)
-      ..write(obj.date);
+      ..write(obj.date)
+      ..writeByte(2)
+      ..write(obj.habbits);
   }
 
   @override

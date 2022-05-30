@@ -3,6 +3,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/libary.dart';
+import 'package:habit_tracker/model/dayli_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
 import 'package:habit_tracker/pages/insights_page.dart';
 
@@ -63,8 +64,12 @@ class _SetHabitPageState extends State<SetHabitPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => const InsightsPage()));
                               final box = Boxes.getMoodDays();
+
                               List<MoodDay> MoodDays =
                                   box.values.toList().cast<MoodDay>();
+                              final habbitBox = Boxes.getHabbits();
+                              final habbits =
+                                  habbitBox.values.toList().cast<Habbit>();
                               if (MoodDays.isNotEmpty) {
                                 if (MoodDays.last.date.day ==
                                     DateTime.now().day) {
@@ -73,13 +78,17 @@ class _SetHabitPageState extends State<SetHabitPage> {
                                     MoodDay(
                                       feeling: "Relaxed",
                                       date: DateTime.now(),
+                                      habbits: habbits,
                                     ),
                                   );
                                   return;
                                 }
                               }
+
                               box.add(MoodDay(
-                                  feeling: "Relaxed", date: DateTime.now()));
+                                  feeling: "Relaxed",
+                                  date: DateTime.now(),
+                                  habbits: habbits));
                             },
                           ),
                           HabitButton(
@@ -90,6 +99,9 @@ class _SetHabitPageState extends State<SetHabitPage> {
                               final box = Boxes.getMoodDays();
                               List<MoodDay> MoodDays =
                                   box.values.toList().cast<MoodDay>();
+                                  final habbitBox = Boxes.getHabbits();
+                              final habbits =
+                                  habbitBox.values.toList().cast<Habbit>();
                               if (MoodDays.isNotEmpty) {
                                 if (MoodDays.last.date.day ==
                                     DateTime.now().day) {
@@ -98,13 +110,14 @@ class _SetHabitPageState extends State<SetHabitPage> {
                                     MoodDay(
                                       feeling: "Bored",
                                       date: DateTime.now(),
+                                      habbits: habbits
                                     ),
                                   );
                                   return;
                                 }
                               }
                               box.add(MoodDay(
-                                  feeling: "Bored", date: DateTime.now()));
+                                  feeling: "Bored", date: DateTime.now(), habbits: habbits));
                             },
                           )
                         ],
@@ -118,9 +131,11 @@ class _SetHabitPageState extends State<SetHabitPage> {
                                   builder: (context) => const InsightsPage()));
                               final box = Boxes.getMoodDays();
 
-                              // ! BUG, mehrere Moods können an einem Tag hinzugefügt werden
                               List<MoodDay> MoodDays =
                                   box.values.toList().cast<MoodDay>();
+                                  final habbitBox = Boxes.getHabbits();
+                              final habbits =
+                                  habbitBox.values.toList().cast<Habbit>();
                               if (MoodDays.isNotEmpty) {
                                 if (MoodDays.last.date.day ==
                                     DateTime.now().day) {
@@ -129,6 +144,7 @@ class _SetHabitPageState extends State<SetHabitPage> {
                                     MoodDay(
                                       feeling: "Grateful",
                                       date: DateTime.now(),
+                                      habbits: habbits
                                     ),
                                   );
                                   return;
@@ -136,7 +152,7 @@ class _SetHabitPageState extends State<SetHabitPage> {
                               }
 
                               box.add(MoodDay(
-                                  feeling: "Grateful", date: DateTime.now()));
+                                  feeling: "Grateful", date: DateTime.now(), habbits: habbits));
                             },
                           ),
                           HabitButton(
@@ -147,6 +163,9 @@ class _SetHabitPageState extends State<SetHabitPage> {
                               final box = Boxes.getMoodDays();
                               List<MoodDay> MoodDays =
                                   box.values.toList().cast<MoodDay>();
+                                  final habbitBox = Boxes.getHabbits();
+                              final habbits =
+                                  habbitBox.values.toList().cast<Habbit>();
                               if (MoodDays.isNotEmpty) {
                                 if (MoodDays.last.date.day ==
                                     DateTime.now().day) {
@@ -155,13 +174,14 @@ class _SetHabitPageState extends State<SetHabitPage> {
                                     MoodDay(
                                       feeling: "Angry",
                                       date: DateTime.now(),
+                                      habbits: habbits,
                                     ),
                                   );
                                   return;
                                 }
                               }
                               box.add(MoodDay(
-                                  feeling: "Angry", date: DateTime.now()));
+                                  feeling: "Angry", date: DateTime.now(), habbits: habbits));
                             },
                           ),
                         ],

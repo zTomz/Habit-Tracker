@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/libary.dart';
+import 'package:habit_tracker/model/dayli_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
 import 'package:habit_tracker/pages/settings_page.dart';
@@ -104,7 +105,7 @@ class _StatsPageState extends State<StatsPage> {
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 25),
                           width: 800,
-                          height: 150,
+                          height: 250,
                           child: ScrollablePositionedList.builder(
                             itemScrollController: itemScrollController,
                             itemBuilder: (BuildContext context, int index) {
@@ -236,6 +237,31 @@ class HabitGrapghItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
+          Container(
+            height: 100,
+            width: 10,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: PURPLE,
+                    ),
+                  ),
+                  Container(
+                    height: double.parse((100 * getProcent(moodDays[this.index].habbits)).toString()),
+                    decoration: BoxDecoration(
+                      color: GREEN,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
           Image.asset(
             "assets/ico/${moodDays[this.index].feeling.toLowerCase()}.png",
             width: 30,
@@ -245,5 +271,20 @@ class HabitGrapghItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int getFinishedHabbits(List<Habbit> habbits) {
+    int finished = 0;
+    habbits.forEach((element) {
+      if (element.finished == true) {
+        finished += 1;
+      }
+    });
+    return finished;
+  }
+
+  double getProcent(List<Habbit> habbits) {
+    return double.parse(
+        (getFinishedHabbits(habbits) / habbits.length).toString());
   }
 }

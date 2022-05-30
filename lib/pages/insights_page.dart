@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/libary.dart';
 import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/mood_day.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
 import 'package:habit_tracker/pages/settings_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -23,6 +24,12 @@ class _InsightsPageState extends State<InsightsPage> {
       currentPage = 1;
     });
     // Hive.close();
+    // final habbitBox = Boxes.getHabbits();
+    // habbitBox.clear();
+
+    // final moodBox = Boxes.getMoodDays();
+    // moodBox.clear();
+
     super.initState();
   }
 
@@ -53,10 +60,10 @@ class _InsightsPageState extends State<InsightsPage> {
           size: 37.5,
         ),
       ),
-      body: ValueListenableBuilder<Box<Habbit>>(
-        valueListenable: Boxes.getHabbits().listenable(),
+      body: ValueListenableBuilder<Box<MoodDay>>(
+        valueListenable: Boxes.getMoodDays().listenable(),
         builder: (context, box, _) {
-          final habbits = box.values.toList().cast<Habbit>();
+          final moodDays = box.values.toList().cast<MoodDay>();
 
           return Container(
             decoration: const BoxDecoration(
@@ -121,12 +128,12 @@ class _InsightsPageState extends State<InsightsPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  "assets/moods/fire.png",
+                                  getDayImage(),
                                   width: 80,
                                 ),
                                 const SizedBox(height: 15),
-                                const Text(
-                                  "Today was good",
+                                Text(
+                                  getDayText(),
                                   style: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w400),
@@ -187,14 +194,16 @@ class _InsightsPageState extends State<InsightsPage> {
                                   itemBuilder:
                                       (BuildContext context, int index) =>
                                           HabitListItem(
-                                    title: habbits[index].habbit,
-                                    finished: habbits[index].finished,
+                                    title: moodDays.last.habbits[index].habbit,
+                                    finished:
+                                        moodDays.last.habbits[index].finished,
                                     function: () => setState(() {
-                                      habbits[index].finished =
-                                          !habbits[index].finished;
+                                      moodDays.last.habbits[index].finished =
+                                          !moodDays
+                                              .last.habbits[index].finished;
                                     }),
                                   ),
-                                  itemCount: habbits.length,
+                                  itemCount: moodDays.last.habbits.length,
                                 ),
                               ),
                               Container(
@@ -207,7 +216,7 @@ class _InsightsPageState extends State<InsightsPage> {
                                 ),
                                 child: Center(
                                     child: Text(
-                                        "${getFinishedHabbits().toString()}/${habbits.length}")),
+                                        "${getFinishedHabbits().toString()}/${moodDays.last.habbits.length}")),
                               ),
                             ],
                           ),
@@ -257,11 +266,69 @@ class _InsightsPageState extends State<InsightsPage> {
     );
   }
 
-  int getFinishedHabbits() {
-    final box = Boxes.getHabbits();
-    final habbits = box.values.toList().cast<Habbit>();
+  String getDayImage() {
+    final box = Boxes.getMoodDays();
+    final moodDays = box.values.toList().cast<MoodDay>();
+
     int finished = 0;
-    habbits.forEach((element) {
+    moodDays.last.habbits.forEach((element) {
+      if (element.finished == true) {
+        finished += 1;
+      }
+    });
+
+    // * Wenn alle geschafft
+    if (moodDays.last.habbits.length / finished == 1) {
+      return "assets/moods/fire.png";
+    }
+    // * Wenn 1 nicht geschafft
+    if (moodDays.last.habbits.length / finished > 1) {
+      if (moodDays.last.habbits.length / finished < 3) {
+        return "assets/moods/happy.png";
+      }
+    }
+    if (moodDays.last.habbits.length / finished > 3) {
+      if (moodDays.last.habbits.length / finished < 5) {
+        return "assets/moods/thinking.png";
+      }
+    }
+    return "assets/moods/sad.png";
+  }
+
+  String getDayText() {
+    final box = Boxes.getMoodDays();
+    final moodDays = box.values.toList().cast<MoodDay>();
+
+    int finished = 0;
+    moodDays.last.habbits.forEach((element) {
+      if (element.finished == true) {
+        finished += 1;
+      }
+    });
+
+    // * Wenn alle geschafft
+    if (moodDays.last.habbits.length / finished == 1) {
+      return "Today was insane!";
+    }
+    // * Wenn 1 nicht geschafft
+    if (moodDays.last.habbits.length / finished > 1) {
+      if (moodDays.last.habbits.length / finished < 3) {
+        return "Today was good.";
+      }
+    }
+    if (moodDays.last.habbits.length / finished > 3) {
+      if (moodDays.last.habbits.length / finished < 5) {
+        return "Today was ok.";
+      }
+    }
+    return "Today can be better.";
+  }
+
+  int getFinishedHabbits() {
+    final box = Boxes.getMoodDays();
+    final moodDays = box.values.toList().cast<MoodDay>();
+    int finished = 0;
+    moodDays.last.habbits.forEach((element) {
       if (element.finished == true) {
         finished += 1;
       }

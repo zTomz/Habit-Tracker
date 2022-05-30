@@ -16,8 +16,8 @@ class MoodDay extends HiveObject {
   final String feeling;
   @HiveField(1)
   final DateTime date;
-  // @HiveField(2)
-  // List<Habbit> habbits;
+  @HiveField(2)
+  List<Habbit> habbits;
 
-  MoodDay({required this.feeling, required this.date, /* required this.habbits */});
+  MoodDay({required this.feeling, required this.date, required this.habbits});
 }
