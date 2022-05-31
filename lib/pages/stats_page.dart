@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/libary.dart';
-import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
 import 'package:habit_tracker/pages/settings_page.dart';
@@ -48,23 +48,23 @@ class _StatsPageState extends State<StatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => SettingsPage(
-              backFunction: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const StatsPage(),
-                  ))),
-        )),
-        backgroundColor: Colors.white.withOpacity(0.4),
-        foregroundColor: PURPLE,
-        splashColor: PURPLE,
-        tooltip: "Settings",
-        elevation: 0,
-        child: const Icon(
-          Icons.settings,
-          size: 37.5,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+      //     builder: (context) => SettingsPage(
+      //         backFunction: () => Navigator.of(context).push(MaterialPageRoute(
+      //               builder: (context) => const StatsPage(),
+      //             ))),
+      //   )),
+      //   backgroundColor: Colors.white.withOpacity(0.4),
+      //   foregroundColor: PURPLE,
+      //   splashColor: PURPLE,
+      //   tooltip: "Settings",
+      //   elevation: 0,
+      //   child: const Icon(
+      //     Icons.settings,
+      //     size: 37.5,
+      //   ),
+      // ),
       body: ValueListenableBuilder<Box<MoodDay>>(
         valueListenable: Boxes.getMoodDays().listenable(),
         builder: (context, box, _) {

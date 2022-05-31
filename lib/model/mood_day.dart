@@ -1,4 +1,4 @@
-import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
 

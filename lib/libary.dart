@@ -1,7 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +9,11 @@ import 'package:hive/hive.dart';
 class Boxes {
   static Box<MoodDay> getMoodDays() => Hive.box<MoodDay>("MoodBox");
   static Box<Habbit> getHabbits() => Hive.box<Habbit>("HabbitBox");
+
+  /* 
+  Index 0: Streak dauer
+  */
+  static Box getSettings() => Hive.box("SettingsBox");
 }
 
 // ! Colors

@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/libary.dart';
-import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
+import 'package:habit_tracker/model/streak.dart';
 import 'package:habit_tracker/pages/insights_page.dart';
 import 'package:habit_tracker/pages/set_habit_page.dart';
 import 'package:habit_tracker/pages/settings_page.dart';
@@ -15,9 +16,11 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MoodDayAdapter());
   Hive.registerAdapter(HabbitAdapter());
+  Hive.registerAdapter(StreakAdapter());
 
   await Hive.openBox<MoodDay>('MoodBox');
   await Hive.openBox<Habbit>("HabbitBox");
+  await Hive.openBox("SettingsBox");
 
   // final moodBox = Boxes.getMoodDays();
   // moodBox.clear();
@@ -25,17 +28,18 @@ Future<void> main() async {
   // habbitBox.clear();
 
   if (habbitBox.isEmpty) {
-    habbitBox.add(Habbit(habbit: "Train", id: 0, finished: false));
-    habbitBox.add(Habbit(habbit: "Sleep well", id: 1, finished: false));
-    habbitBox
-        .add(Habbit(habbit: "Program on habit app", id: 2, finished: false));
+    habbitBox.add(Habbit(habbit: "Train", finished: false));
+    habbitBox.add(Habbit(habbit: "Sleep well", finished: false));
+    habbitBox.add(Habbit(habbit: "Program on habit app", finished: false));
   }
 
+  final settingsBox = Boxes.getSettings();
+  if (settingsBox.isEmpty) {
+    settingsBox.add(Streak(lenght: 0, lastEdit: DateTime.now()));
+  }
   // Get box and edit it
   // final box = Boxes.getMoodDays();
   // box.add("****")
-
-  
 
   try {
     final moodBox = Boxes.getMoodDays();

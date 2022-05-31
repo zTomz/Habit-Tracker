@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dayli_habbit.dart';
+part of 'daily_habbit.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -18,20 +18,17 @@ class HabbitAdapter extends TypeAdapter<Habbit> {
     };
     return Habbit(
       habbit: fields[0] as String,
-      id: fields[1] as int,
-      finished: fields[2] as bool,
+      finished: fields[1] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, Habbit obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(2)
       ..writeByte(0)
       ..write(obj.habbit)
       ..writeByte(1)
-      ..write(obj.id)
-      ..writeByte(2)
       ..write(obj.finished);
   }
 

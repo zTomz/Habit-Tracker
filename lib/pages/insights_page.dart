@@ -4,8 +4,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/libary.dart';
-import 'package:habit_tracker/model/dayli_habbit.dart';
+import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
+import 'package:habit_tracker/model/streak.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
 import 'package:habit_tracker/pages/settings_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -36,30 +37,32 @@ class _InsightsPageState extends State<InsightsPage> {
   static const TextStyle title =
       TextStyle(fontSize: 26, fontWeight: FontWeight.bold, height: 1.2);
 
+  TextEditingController _habbitTextController = TextEditingController();
+
   static const double sidePadding = 20;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(
-                backFunction: () =>
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const InsightsPage(),
-                    ))),
-          ),
-        ),
-        backgroundColor: Colors.white.withOpacity(0.4),
-        foregroundColor: PURPLE,
-        splashColor: PURPLE,
-        tooltip: "Settings",
-        elevation: 0,
-        child: const Icon(
-          Icons.settings,
-          size: 37.5,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => Navigator.of(context).push(
+      //     MaterialPageRoute(
+      //       builder: (context) => SettingsPage(
+      //           backFunction: () =>
+      //               Navigator.of(context).push(MaterialPageRoute(
+      //                 builder: (context) => const InsightsPage(),
+      //               ))),
+      //     ),
+      //   ),
+      //   backgroundColor: Colors.white.withOpacity(0.4),
+      //   foregroundColor: PURPLE,
+      //   splashColor: PURPLE,
+      //   tooltip: "Settings",
+      //   elevation: 0,
+      //   child: const Icon(
+      //     Icons.settings,
+      //     size: 37.5,
+      //   ),
+      // ),
       body: ValueListenableBuilder<Box<MoodDay>>(
         valueListenable: Boxes.getMoodDays().listenable(),
         builder: (context, box, _) {
@@ -134,7 +137,7 @@ class _InsightsPageState extends State<InsightsPage> {
                                 const SizedBox(height: 15),
                                 Text(
                                   getDayText(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w400),
                                 ),
@@ -184,40 +187,94 @@ class _InsightsPageState extends State<InsightsPage> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 30),
-                          child: Row(
+                          child: Column(
                             children: [
-                              // ignore: sized_box_for_whitespace
-                              Container(
-                                height: 200,
-                                width: 240,
-                                child: ListView.builder(
-                                  itemBuilder:
-                                      (BuildContext context, int index) =>
-                                          HabitListItem(
-                                    title: moodDays.last.habbits[index].habbit,
-                                    finished:
-                                        moodDays.last.habbits[index].finished,
-                                    function: () => setState(() {
-                                      moodDays.last.habbits[index].finished =
-                                          !moodDays
-                                              .last.habbits[index].finished;
-                                    }),
+                              Row(
+                                children: [
+                                  // ignore: sized_box_for_whitespace
+                                  Container(
+                                    height: 200,
+                                    width: 240,
+                                    child: ListView.builder(
+                                      itemBuilder:
+                                          (BuildContext context, int index) =>
+                                              HabitListItem(
+                                        title:
+                                            moodDays.last.habbits[index].habbit,
+                                        finished: moodDays
+                                            .last.habbits[index].finished,
+                                        function: () => setState(() {
+                                          moodDays.last.habbits[index]
+                                                  .finished =
+                                              !moodDays
+                                                  .last.habbits[index].finished;
+
+                                          moodDays.last.save();
+                                        }),
+                                      ),
+                                      itemCount: moodDays.last.habbits.length,
+                                    ),
                                   ),
-                                  itemCount: moodDays.last.habbits.length,
-                                ),
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(25),
+                                      border: Border.all(
+                                          width: 1.5,
+                                          color: GREY.withOpacity(0.6)),
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                            "${getFinishedHabbits().toString()}/${moodDays.last.habbits.length}")),
+                                  ),
+                                ],
                               ),
+                              const SizedBox(height: 7.5),
                               Container(
-                                width: 50,
-                                height: 50,
+                                height: 60,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 15),
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  border: Border.all(
-                                      width: 1.5, color: GREY.withOpacity(0.6)),
+                                  color: Colors.white.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Center(
-                                    child: Text(
-                                        "${getFinishedHabbits().toString()}/${moodDays.last.habbits.length}")),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 6,
+                                      child: TextField(
+                                        maxLines: null,
+                                        controller: _habbitTextController,
+                                        decoration: const InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Add daily habbit..."),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: IconButton(
+                                        icon: SvgPicture.asset(
+                                            "assets/ico/add.svg"),
+                                        iconSize: 40,
+                                        onPressed: () {
+                                          setState(
+                                            () {
+                                              moodDays.last.habbits.add(
+                                                Habbit(
+                                                  habbit: _habbitTextController
+                                                      .text,
+                                                  finished: false,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
+                              const SizedBox(height: 7.5),
                             ],
                           ),
                         ),
@@ -240,7 +297,7 @@ class _InsightsPageState extends State<InsightsPage> {
                           height: 7.5,
                         ),
                         Text(
-                          "$streakLenght-day-streak",
+                          "${getStreak().lenght}-day-streak",
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
@@ -252,6 +309,8 @@ class _InsightsPageState extends State<InsightsPage> {
                     onPressed: () {
                       final box = Boxes.getMoodDays();
                       box.clear();
+                      final habbitBox = Boxes.getHabbits();
+                      habbitBox.clear();
                     },
                     icon: const Icon(Icons.clear_all),
                     iconSize: 75,
@@ -264,6 +323,14 @@ class _InsightsPageState extends State<InsightsPage> {
         },
       ),
     );
+  }
+
+  Streak getStreak() {
+    final settingsBox = Boxes.getSettings();
+    Streak streak = settingsBox.values.toList()[0];
+
+    // settingsBox.close();
+    return streak;
   }
 
   String getDayImage() {
