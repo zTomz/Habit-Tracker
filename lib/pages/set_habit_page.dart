@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:habit_tracker/libary.dart';
 import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
-import 'package:habit_tracker/model/streak.dart';
 import 'package:habit_tracker/pages/insights_page.dart';
 
 class SetHabitPage extends StatefulWidget {
@@ -132,14 +131,7 @@ class _SetHabitPageState extends State<SetHabitPage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => const InsightsPage()));
                               final box = Boxes.getMoodDays();
-                              final settingsBox = Boxes.getSettings();
-                              Streak streak = settingsBox.values.toList()[0];
-                              settingsBox.putAt(
-                                  0,
-                                  Streak(
-                                      lenght: streak.lenght + 1,
-                                      lastEdit: DateTime.now()));
-                              // settingsBox.close();
+                              
 
                               List<MoodDay> MoodDays =
                                   box.values.toList().cast<MoodDay>();

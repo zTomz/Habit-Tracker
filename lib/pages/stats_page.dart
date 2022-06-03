@@ -7,7 +7,6 @@ import 'package:habit_tracker/libary.dart';
 import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
-import 'package:habit_tracker/pages/settings_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -237,7 +236,7 @@ class HabitGrapghItem extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
+          SizedBox(
             height: 100,
             width: 10,
             child: ClipRRect(
@@ -247,13 +246,17 @@ class HabitGrapghItem extends StatelessWidget {
                 children: [
                   Container(
                     height: 100,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: PURPLE,
                     ),
                   ),
                   Container(
-                    height: double.parse((100 * getProcent(moodDays[this.index].habbits)).toString()),
-                    decoration: BoxDecoration(
+                    height: moodDays[this.index].habbits.isNotEmpty
+                        ? double.parse(
+                            (100 * getProcent(moodDays[this.index].habbits))
+                                .toString())
+                        : 100,
+                    decoration: const BoxDecoration(
                       color: GREEN,
                     ),
                   ),
@@ -275,11 +278,11 @@ class HabitGrapghItem extends StatelessWidget {
 
   int getFinishedHabbits(List<Habbit> habbits) {
     int finished = 0;
-    habbits.forEach((element) {
+    for (var element in habbits) {
       if (element.finished == true) {
         finished += 1;
       }
-    });
+    }
     return finished;
   }
 

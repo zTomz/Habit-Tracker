@@ -6,9 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habit_tracker/libary.dart';
 import 'package:habit_tracker/model/daily_habbit.dart';
 import 'package:habit_tracker/model/mood_day.dart';
-import 'package:habit_tracker/model/streak.dart';
 import 'package:habit_tracker/pages/fineTabBar.dart';
-import 'package:habit_tracker/pages/settings_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class InsightsPage extends StatefulWidget {
@@ -37,7 +35,7 @@ class _InsightsPageState extends State<InsightsPage> {
   static const TextStyle title =
       TextStyle(fontSize: 26, fontWeight: FontWeight.bold, height: 1.2);
 
-  TextEditingController _habbitTextController = TextEditingController();
+  final TextEditingController _habbitTextController = TextEditingController();
 
   static const double sidePadding = 20;
   @override
@@ -131,15 +129,18 @@ class _InsightsPageState extends State<InsightsPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  getDayImage(),
+                                  getDay()[1],
                                   width: 80,
                                 ),
                                 const SizedBox(height: 15),
                                 Text(
-                                  getDayText(),
+                                  getDay()[0],
                                   style: const TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w400),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w400,
+                                    
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ],
                             ),
@@ -157,10 +158,7 @@ class _InsightsPageState extends State<InsightsPage> {
                       children: [
                         const Text("Your habits\non this day", style: title),
                         const SizedBox(width: 30),
-                        Image.asset(
-                          "assets/moods/fire.png",
-                          width: 40,
-                        )
+                        SvgPicture.asset("assets/ico/fire.svg", width: 40,)
                       ],
                     ),
                   ),
@@ -210,6 +208,9 @@ class _InsightsPageState extends State<InsightsPage> {
                                                   .last.habbits[index].finished;
 
                                           moodDays.last.save();
+                                        }),
+                                        deleteFunction: () => setState(() {
+                                          moodDays.last.habbits.removeAt(index);
                                         }),
                                       ),
                                       itemCount: moodDays.last.habbits.length,
@@ -266,6 +267,7 @@ class _InsightsPageState extends State<InsightsPage> {
                                                   finished: false,
                                                 ),
                                               );
+                                              _habbitTextController.text = "";
                                             },
                                           );
                                         },
@@ -297,7 +299,7 @@ class _InsightsPageState extends State<InsightsPage> {
                           height: 7.5,
                         ),
                         Text(
-                          "${getStreak().lenght}-day-streak",
+                          "${moodDays.length}-day-streak",
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
@@ -325,91 +327,68 @@ class _InsightsPageState extends State<InsightsPage> {
     );
   }
 
-  Streak getStreak() {
-    final settingsBox = Boxes.getSettings();
-    Streak streak = settingsBox.values.toList()[0];
-
-    // settingsBox.close();
-    return streak;
-  }
-
-  String getDayImage() {
+  List<String> getDay() {
+    // ? Zurückgegeben wird Liste: [Text wie der Tag war, Bild wie der Tag war]
     final box = Boxes.getMoodDays();
     final moodDays = box.values.toList().cast<MoodDay>();
 
-    int finished = 0;
-    moodDays.last.habbits.forEach((element) {
+    double finished = 0;
+    for (var element in moodDays.last.habbits) {
       if (element.finished == true) {
         finished += 1;
       }
-    });
+    }
 
-    // * Wenn alle geschafft
-    if (moodDays.last.habbits.length / finished == 1) {
-      return "assets/moods/fire.png";
+    if (moodDays.last.habbits.isEmpty) {
+      return ["Today there were\nno habits.", "assets/moods/loading.png"];
     }
-    // * Wenn 1 nicht geschafft
-    if (moodDays.last.habbits.length / finished > 1) {
-      if (moodDays.last.habbits.length / finished < 3) {
-        return "assets/moods/happy.png";
-      }
-    }
-    if (moodDays.last.habbits.length / finished > 3) {
-      if (moodDays.last.habbits.length / finished < 5) {
-        return "assets/moods/thinking.png";
-      }
-    }
-    return "assets/moods/sad.png";
-  }
 
-  String getDayText() {
-    final box = Boxes.getMoodDays();
-    final moodDays = box.values.toList().cast<MoodDay>();
-
-    int finished = 0;
-    moodDays.last.habbits.forEach((element) {
-      if (element.finished == true) {
-        finished += 1;
-      }
-    });
-
-    // * Wenn alle geschafft
-    if (moodDays.last.habbits.length / finished == 1) {
-      return "Today was insane!";
+    // *
+    if (getProcent(finished, moodDays.last.habbits.length) == 1) {
+      return ["Today was insane!", "assets/moods/fire.png"];
     }
-    // * Wenn 1 nicht geschafft
-    if (moodDays.last.habbits.length / finished > 1) {
-      if (moodDays.last.habbits.length / finished < 3) {
-        return "Today was good.";
-      }
+    if (getProcent(finished, moodDays.last.habbits.length) >= 0.75) {
+      return ["Today was good.", "assets/moods/happy.png"];
     }
-    if (moodDays.last.habbits.length / finished > 3) {
-      if (moodDays.last.habbits.length / finished < 5) {
-        return "Today was ok.";
-      }
+    if (getProcent(finished, moodDays.last.habbits.length) >= 0.5) {
+      return ["Today was ok.", "assets/moods/thinking.png"];
     }
-    return "Today can be better.";
+    if (getProcent(finished, moodDays.last.habbits.length) >= 0.25) {
+      return ["Today wasn't so good....", "assets/moods/frown.png"];
+    }
+    return ["Today could be better...", "assets/moods/sad.png"];
   }
 
   int getFinishedHabbits() {
     final box = Boxes.getMoodDays();
     final moodDays = box.values.toList().cast<MoodDay>();
     int finished = 0;
-    moodDays.last.habbits.forEach((element) {
+    for (var element in moodDays.last.habbits) {
       if (element.finished == true) {
         finished += 1;
       }
-    });
+    }
     return finished;
+  }
+
+  double getProcent(double amout, int all) {
+    return double.parse((amout / all).toString());
   }
 }
 
 class HabitListItem extends StatefulWidget {
   final String title;
   final void Function() function;
+  final void Function() deleteFunction;
+
   bool finished;
-  HabitListItem(
-      {required this.title, required this.finished, required this.function});
+
+  HabitListItem({
+    required this.title,
+    required this.finished,
+    required this.function,
+    required this.deleteFunction,
+  });
 
   @override
   State<HabitListItem> createState() => _HabitListItemState();
@@ -420,6 +399,7 @@ class _HabitListItemState extends State<HabitListItem> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: this.widget.function,
+      onLongPress: this.widget.deleteFunction,
       child: Text(
         this.widget.title,
         style: TextStyle(

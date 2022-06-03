@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_this
+// ignore_for_file: unnecessary_this, use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,11 +35,11 @@ class _SettingsPageState extends State<SettingsPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal: padding),
+                padding: const EdgeInsets.symmetric(horizontal: padding),
                 child: Row(
-                  children: [
+                  children: const [
                     Text(
                       "Settings",
                       style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
